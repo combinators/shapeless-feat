@@ -5,7 +5,7 @@ This project brings [testing-feat](http://hackage.haskell.org/package/testing-fe
 
 You may find detailed information about feat in the paper by Duregård et al.:
 
-[Duregård, Jonas, Patrik Jansson, and Meng Wang. "Feat: functional enumeration of algebraic types." ACM SIGPLAN Notices 47.12 (2013): 61-72.](http://dl.acm.org/citation.cfm?id=2364515)
+Duregård, Jonas, Patrik Jansson, and Meng Wang. "Feat: functional enumeration of algebraic types." ACM SIGPLAN Notices 47.12 (2013): 61-72. Online [here](https://kar.kent.ac.uk/47486/1/enumeration-algebraic-types_Feat.pdf) and [here](http://dl.acm.org/citation.cfm?id=2364515).
 
 ## Installation
 There is no release yet, so just fork the reopsitory, run sbt and publishLocal. Note, that you will need [shapeless-2.3.0-SNAPSHOT](https://github.com/milessabin/shapeless).
