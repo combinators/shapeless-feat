@@ -8,10 +8,10 @@ You may find detailed information about feat in the paper by Duregård et al.:
 [Duregård, Jonas, Patrik Jansson, and Meng Wang. "Feat: functional enumeration of algebraic types." ACM SIGPLAN Notices 47.12 (2013): 61-72.](http://dl.acm.org/citation.cfm?id=2364515)
 
 ## Installation
-TODO
+There is no release yet, so just fork the reopsitory, run sbt and publishLocal. Note, that you will need [shapeless-2.3.0-SNAPSHOT](https://github.com/milessabin/shapeless).
 
 ## Examples
-TODO
+Can be found in the [examples project](https://github.com/JanBessai/shapeless-feat/tree/master/examples/src/main/scala) and the [tests](https://github.com/JanBessai/shapeless-feat/tree/master/core/src/test/scala/shapeless/feat).
 
 ## Help and Contributions
 
