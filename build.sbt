@@ -14,19 +14,44 @@
  * limitations under the License.
  */
 
-name := "shapeless-feat"
-version := "0.1"
-resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
-  Resolver.sonatypeRepo("snapshots")
+lazy val commonSettings = Seq(
+  organization := "de.tu_dortmund.cs.ls14",
+  version := "0.1",
+
+  resolvers ++= Seq(
+    Resolver.sonatypeRepo("releases"),
+    Resolver.sonatypeRepo("snapshots")
+  ),
+
+  scalaVersion := "2.11.7",
+  scalacOptions ++= Seq(
+    "-unchecked",
+    "-deprecation",
+    "-feature",
+    "-language:implicitConversions"
+  )
 )
-scalaVersion := "2.11.7"
-scalacOptions ++= Seq(
-  "-unchecked",
-  "-deprecation",
-  "-feature",
-  "-language:implicitConversions"
-)
-libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.0-SNAPSHOT"
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+
+lazy val core = (Project(id = "shapeless-feat", base = file("core"))).
+  settings(commonSettings: _*).
+  settings(
+    moduleName := "shapeless-feat",
+    libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.0-SNAPSHOT",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+    libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+  )
+
+lazy val examples = (Project(id = "shapeless-feat-examples", base = file("examples"))).
+  settings(commonSettings: _*).
+  dependsOn(core).
+  settings(
+    moduleName := "shapeless-feat-examples"
+  )
+
+lazy val root = (project in file(".")).
+  settings(commonSettings: _*).
+  aggregate(core, examples).
+  settings(
+    moduleName := "shapeless-feat-root"
+  )
+
