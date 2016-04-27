@@ -62,6 +62,7 @@ lazy val publishSettings = Seq(
   publishMavenStyle := true,
 	publishArtifact in Test := false,
 	pomIncludeRepository := { _ => false },
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishTo <<= version { (v: String) =>
   	val nexus = "https://oss.sonatype.org/"
 	  if (v.trim.endsWith("SNAPSHOT"))
