@@ -16,7 +16,6 @@
 
 lazy val commonSettings = Seq(
   organization := "de.tu_dortmund.cs.ls14",
-  releaseUseGlobalVersion := false,
   releaseVersionBump := sbtrelease.Version.Bump.Minor,
   releaseIgnoreUntrackedFiles := true,
 
