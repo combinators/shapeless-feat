@@ -8,7 +8,13 @@ You may find detailed information about feat in the paper by Duregård et al.:
 Duregård, Jonas, Patrik Jansson, and Meng Wang. "Feat: functional enumeration of algebraic types." ACM SIGPLAN Notices 47.12 (2013): 61-72. Online [here](https://kar.kent.ac.uk/47486/1/enumeration-algebraic-types_Feat.pdf) and [here](http://dl.acm.org/citation.cfm?id=2364515).
 
 ## Installation
-There is no release yet, so just fork the reopsitory, run sbt and publishLocal. Note, that you will need [shapeless-2.3.0-SNAPSHOT](https://github.com/milessabin/shapeless).
+To obtain the latest version, clone the reopsitory and run sbt and publishLocal.
+
+The current release is available at maven central, just add 
+``
+libraryDependencies += "de.tu-dortmund.cs.ls14" %% "shapeless-feat" % "0.1.0"
+``
+Currently, only Scala 2.11 is supported in the released version.
 
 ## Examples
 Can be found in the [examples project](https://github.com/JanBessai/shapeless-feat/tree/master/examples/src/main/scala) and the [tests](https://github.com/JanBessai/shapeless-feat/tree/master/core/src/test/scala/shapeless/feat).
