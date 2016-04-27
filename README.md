@@ -11,9 +11,9 @@ Duregård, Jonas, Patrik Jansson, and Meng Wang. "Feat: functional enumeration o
 To obtain the latest version, clone the reopsitory and run sbt and publishLocal.
 
 The current release is available at maven central, just add 
-``
+```scala
 libraryDependencies += "de.tu-dortmund.cs.ls14" %% "shapeless-feat" % "0.1.0"
-``
+```
 Currently, only Scala 2.11 is supported in the released version.
 
 ## Examples
