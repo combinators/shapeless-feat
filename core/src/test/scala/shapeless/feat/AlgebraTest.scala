@@ -30,7 +30,7 @@ class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Match
   import EnumerableInstances._
   
   
-  implicit val smallBigInt = Arbitrary(Gen.choose(Int.MinValue, generatorDrivenConfig.maxSize).map(BigInt(_)))
+  implicit val smallBigInt = Arbitrary(Gen.choose[Int](Int.MinValue, generatorDrivenConfig.sizeRange).map(BigInt(_)))
   
   
     
@@ -43,7 +43,7 @@ class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Match
     "index injective" in {
       forAll { (e: (Symbol, Enumerable[_ <: Any])) =>
         val allElements =
-          (0 to generatorDrivenConfig.maxSize) 
+          (0 to generatorDrivenConfig.sizeRange)
             .map (idx => Try(e._2.enumerate.index(idx)))
             .filter (_.isSuccess)
             .map (_.get)
@@ -52,8 +52,8 @@ class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Match
     }
     "pay sum distributive" in {
       forAll { (e1: (Symbol, Enumerable[_ <: Any]), e2: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
-        e1._2.enumerate.union(e2._2.enumerate).pay should 
-          equalOrExceptAtIndex(i)(e1._2.enumerate.pay.union(e2._2.enumerate.pay))
+        e1._2.enumerate.union(e2._2.enumerate).pay should
+          equalOrExceptAtIndex[Any](i)(e1._2.enumerate.pay.union(e2._2.enumerate.pay))
       }
     }
     "pay product distributive" in {
@@ -84,7 +84,7 @@ class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Match
     "map lifts sum right" in {
       forAll { (e: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
         Enumeration.empty.union(e._2.enumerate.map(Right(_))) should
-          equalOrExceptAtIndex(i)(e._2.enumerate.map(Right(_)))
+          equalOrExceptAtIndex[Any](i)(e._2.enumerate.map(Right(_)))
       }
     }
     "map lifts sum left" in {

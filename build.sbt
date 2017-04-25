@@ -24,7 +24,7 @@ lazy val commonSettings = Seq(
     Resolver.sonatypeRepo("snapshots")
   ),
 
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.12.2",
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
@@ -37,9 +37,9 @@ lazy val core = (Project(id = "shapeless-feat", base = file("core"))).
   settings(commonSettings: _*).
   settings(
     moduleName := "shapeless-feat",
-    libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.0",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+    libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.2",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+    libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
   )
 
 lazy val examples = (Project(id = "shapeless-feat-examples", base = file("examples"))).
@@ -63,13 +63,13 @@ lazy val publishSettings = Seq(
 	publishArtifact in Test := false,
 	pomIncludeRepository := { _ => false },
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-  publishTo <<= version { (v: String) =>
+  publishTo := { version { (v: String) =>
   	val nexus = "https://oss.sonatype.org/"
 	  if (v.trim.endsWith("SNAPSHOT"))
   	  Some("snapshots" at nexus + "content/repositories/snapshots")
 	  else
   	  Some("releases" at nexus + "service/local/staging/deploy/maven2")
-	},
+	}.value },
 	homepage := Some(url("https://www.github.com/JanBessai/shapeless-feat")),
 	licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
 	scmInfo := Some(ScmInfo(url("https://github.com/JanBessai/shapeless-feat"), "scm:git:git@github.com:JanBessai/shapeless-feat.git")),

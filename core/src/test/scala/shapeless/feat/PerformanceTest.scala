@@ -33,7 +33,7 @@ class PerformanceTest extends FreeSpec with GeneratorDrivenPropertyChecks with M
       System.gc() // Try to avoid overflows in repeated sbt runs
       forAll { (e: (Symbol, Enumerable[_ <: Any])) =>
         failAfter(10 seconds) {
-          e._2.enumerate should (equalOrExceptAtIndex(2000)(e._2.enumerate))
+          e._2.enumerate should (equalOrExceptAtIndex[Any](2000)(e._2.enumerate))
         }
         
       }
