@@ -30,7 +30,9 @@ lazy val commonSettings = Seq(
     "-deprecation",
     "-feature",
     "-language:implicitConversions"
-   )
+   ),
+   javaOptions := Seq("-Xss16m"),
+   fork in Test := true
  ) ++ publishSettings
 
 lazy val core = (Project(id = "shapeless-feat", base = file("core"))).
