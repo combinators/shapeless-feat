@@ -17,13 +17,6 @@
 package shapeless.feat
 
 import org.scalatest._
-import org.scalatest.prop._
-import org.scalatest.matchers._
-import org.scalatest.prop.PropertyChecks
-import org.scalacheck.Properties
-import org.scalacheck.Gen
-import org.scalacheck.Arbitrary
-import org.scalacheck.Prop.forAll
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class KnownInstanceTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers {
@@ -32,7 +25,7 @@ class KnownInstanceTest extends FreeSpec with GeneratorDrivenPropertyChecks with
   import EnumerableInstances._
   
   implicit override val generatorDrivenConfig =
-    PropertyCheckConfig(maxSize = 4)
+    PropertyCheckConfiguration(sizeRange = 4)
   
   "Checking known instances" - {
     "NonRec type" in {

@@ -17,13 +17,8 @@
 package shapeless.feat
 import scala.util.Try
 import org.scalatest._
-import org.scalatest.prop._
-import org.scalatest.matchers._
-import org.scalatest.prop.PropertyChecks
-import org.scalacheck.Properties
 import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
-import org.scalacheck.Prop.forAll
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers with MatcherUtil  {

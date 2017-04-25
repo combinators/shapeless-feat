@@ -17,9 +17,6 @@
 package shapeless.feat
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
-import org.scalacheck.Properties
-import org.scalacheck.Prop.forAll
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class PrimitiveTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers  {

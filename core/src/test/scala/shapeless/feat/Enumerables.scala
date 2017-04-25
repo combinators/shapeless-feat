@@ -16,7 +16,6 @@
 
 package shapeless.feat
 
-import shapeless._
 import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
 
