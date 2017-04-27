@@ -25,13 +25,15 @@ lazy val commonSettings = Seq(
   ),
 
   scalaVersion := "2.12.2",
+  crossScalaVersions := Seq("2.11.11", "2.12.2"),
+  releaseCrossBuild := true,
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
     "-feature",
     "-language:implicitConversions"
    ),
-   javaOptions := Seq("-Xss16m"),
+   javaOptions in Test := Seq("-Xss16m"),
    fork in Test := true
  ) ++ publishSettings
 
