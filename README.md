@@ -12,7 +12,7 @@ To obtain the latest version, clone the reopsitory and run sbt and publishLocal.
 
 The current release is available at maven central, just add 
 ```scala
-libraryDependencies += "de.tu-dortmund.cs.ls14" %% "shapeless-feat" % "0.2.1"
+libraryDependencies += "de.tu_dortmund.cs.ls14" %% "shapeless-feat" % "0.2.1"
 ```
 Currently, Scala 2.11 and 2.12 are supported in the released version.
 
