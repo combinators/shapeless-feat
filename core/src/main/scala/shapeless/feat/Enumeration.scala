@@ -16,14 +16,12 @@
 
 package shapeless.feat
 
-import scala.annotation.tailrec
-
 sealed abstract class Finite[+A] { self =>
   val cardinality: BigInt
   protected def getChecked(idx: BigInt): A
   def get(idx: BigInt): A =
     if (idx >= BigInt(0) && idx < cardinality) getChecked(idx) else throw new IndexOutOfBoundsException
-  final def map[B](f: A => B) =
+  final def map[B](f: A => B): Finite[B] =
     new Finite[B] {
       val cardinality = self.cardinality
       def getChecked(idx: BigInt) = f (self.getChecked(idx))
@@ -66,7 +64,7 @@ sealed abstract class Enumeration[+A] { self =>
     if (idx < BigInt(0)) throw new IndexOutOfBoundsException(idx.toString)
     var i = idx
     var p = parts
-    while (!p.isEmpty) {
+    while (p.nonEmpty) {
       val h = p.head
       if (i < h.cardinality) {
         return h.get(i) 
@@ -88,7 +86,7 @@ object Enumeration {
     final def union[B >: A](e: => Enumeration[B]): Enumeration[B] =
       new Enumeration[B] {
         private def unfoldParts(l: => Stream[Finite[A]], r: => Stream[Finite[B]]): Stream[Finite[B]] =
-          if (!l.isEmpty && !r.isEmpty) {
+          if (l.nonEmpty && r.nonEmpty) {
             (l.head :+: r.head) #:: unfoldParts(l.tail, r.tail)
           } else {
             l #::: r
@@ -101,7 +99,7 @@ object Enumeration {
     
     final def reversals: Stream[Enumeration[A] with Enumeration.Reversed] = {
       def go(rev: => Stream[Finite[A]], xs: => Stream[Finite[A]]): Stream[Stream[Finite[A]]] =
-        if (!xs.isEmpty) {
+        if (xs.nonEmpty) {
           lazy val revWithX = xs.head #:: rev
           revWithX #:: go(revWithX, xs.tail)
         } else {
@@ -127,13 +125,13 @@ object Enumeration {
       def go(ry: => Enumeration[B] with Enumeration.Reversed, rys: => Stream[Enumeration[B] with Enumeration.Reversed]): Enumeration[(A, B)] =
         new Enumeration[(A, B)] {
           lazy val parts = self.convolute(ry) #:: (
-              if (!rys.isEmpty) {
+              if (rys.nonEmpty) {
                 go(rys.head, rys.tail).parts
               } else {
-                self.parts.tail.tails.map(x => (new Enumeration[A] { lazy val parts = x }).convolute(ry)).toStream
+                self.parts.tail.tails.map(x => new Enumeration[A] { lazy val parts = x }.convolute(ry)).toStream
               })
         }
-      if (!self.parts.isEmpty && !reverseYss.isEmpty) {
+      if (self.parts.nonEmpty && reverseYss.nonEmpty) {
         go(reverseYss.head, reverseYss.tail)
       } else new Enumeration[(A, B)] { lazy val parts = Stream.empty }
     }
@@ -145,11 +143,11 @@ object Enumeration {
       new Enumeration[A] { lazy val parts = Finite.empty #:: self.parts }
   }
   
-  final def empty[A] = new Enumeration[A] {
+  final def empty[A]: Enumeration[A] = new Enumeration[A] {
     lazy val parts = Stream.empty[Finite[A]] 
   }
   
-  final def singleton[A](x: A) = new Enumeration[A] {
+  final def singleton[A](x: A): Enumeration[A] = new Enumeration[A] {
     lazy val parts = Finite.singleton(x) #:: Stream.empty        
   }
   
