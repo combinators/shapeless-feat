@@ -42,8 +42,8 @@ sealed abstract class Finite[+A] { self =>
         (left.getChecked(idx / self.cardinality), self.getChecked(idx % self.cardinality))
     }
   
-  final def values: Stream[A] = 
-    Stream.from(0, 1).takeWhile(_ < cardinality).map(get(_))
+  final def values: Stream[A] =
+    Stream.iterate(BigInt(0))(_ + BigInt(1)).takeWhile(_ < cardinality).map(getChecked)
 }
 
 object Finite {
