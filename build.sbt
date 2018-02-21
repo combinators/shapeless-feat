@@ -24,29 +24,30 @@ lazy val commonSettings = Seq(
     Resolver.sonatypeRepo("snapshots")
   ),
 
-  scalaVersion := "2.12.2",
-  crossScalaVersions := Seq("2.11.11", "2.12.2"),
+  scalaVersion := "2.12.4",
+  crossScalaVersions := Seq("2.11.12", "2.12.4"),
   releaseCrossBuild := true,
   scalacOptions ++= Seq(
     "-unchecked",
     "-deprecation",
     "-feature",
     "-language:implicitConversions"
+    //,"-Xlog-implicits"
    ),
    javaOptions in Test := Seq("-Xss16m"),
    fork in Test := true
  ) ++ publishSettings
 
-lazy val core = (Project(id = "shapeless-feat", base = file("core"))).
+lazy val core = Project(id = "shapeless-feat", base = file("core")).
   settings(commonSettings: _*).
   settings(
     moduleName := "shapeless-feat",
-    libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.2",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-    libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
+    libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.3",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test",
+    libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"
   )
 
-lazy val examples = (Project(id = "shapeless-feat-examples", base = file("examples"))).
+lazy val examples = Project(id = "shapeless-feat-examples", base = file("examples")).
   settings(commonSettings: _*).
   settings(noPublishSettings: _*).
   dependsOn(core).
