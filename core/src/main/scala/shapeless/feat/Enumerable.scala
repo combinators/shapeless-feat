@@ -78,7 +78,8 @@ trait EnumerableDefaultInstances extends EnumerableGenericInstances {
       lazy val enumerate = Enumeration.charEnumeration
     }
   
-  implicit final def enumerateTraversable[T, C <% GenTraversableLike[T, C]](implicit
+  implicit final def enumerateTraversable[T, C](implicit
+      conv: C => GenTraversableLike[T, C],
       cbf: CanBuildFrom[C, T, C],
       e: Cached[Enumerable[T]]
   ): Enumerable[C] =
