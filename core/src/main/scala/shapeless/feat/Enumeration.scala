@@ -16,7 +16,7 @@
 
 package shapeless.feat
 
-sealed abstract class Finite[+A] { self =>
+sealed abstract class Finite[+A] extends Serializable { self =>
   val cardinality: BigInt
   protected def getChecked(idx: BigInt): A
   def get(idx: BigInt): A =
@@ -58,7 +58,7 @@ object Finite {
     }
 }
 
-sealed abstract class Enumeration[+A] { self =>
+sealed abstract class Enumeration[+A] extends Serializable { self =>
   def parts: Stream[Finite[A]]
   final def index(idx: BigInt): A = {
     if (idx < BigInt(0)) throw new IndexOutOfBoundsException(idx.toString)
@@ -82,7 +82,7 @@ sealed abstract class Enumeration[+A] { self =>
 
 object Enumeration {
   sealed trait Reversed
-  implicit class EnumerationOps[A](self: => Enumeration[A]) {
+  implicit class EnumerationOps[A](self: => Enumeration[A]) extends Serializable {
     final def union[B >: A](e: => Enumeration[B]): Enumeration[B] =
       new Enumeration[B] {
         private def unfoldParts(l: => Stream[Finite[A]], r: => Stream[Finite[B]]): Stream[Finite[B]] =

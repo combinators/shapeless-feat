@@ -20,7 +20,7 @@ import shapeless._
 import scala.collection.generic.CanBuildFrom
 import scala.collection.GenTraversableLike
 
-trait Enumerable[T] {
+trait Enumerable[T] extends Serializable {
   val enumerate: Enumeration[T]
 }
 
