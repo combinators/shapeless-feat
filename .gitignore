@@ -1,13 +1,66 @@
-# Created by https://www.gitignore.io/api/vim,emacs,sbt,eclipse,scala,ensime,intellij
+# Travis secrets
+travis/local.*
 
-### Vim ###
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
-*.un~
-Session.vim
-.netrwhist
-*~
+# Created by https://www.gitignore.io/api/sbt,vim,java,scala,emacs,ensime,eclipse,intellij+all
 
+### Eclipse ###
+
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+
+### Eclipse Patch ###
+# Eclipse Core		
+.project
+
+# JDT-specific (Eclipse Java Development Tools)		
+.classpath
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
@@ -42,81 +95,38 @@ tramp
 
 # cask packages
 .cask/
+dist/
 
+# Flycheck
+flycheck_*.el
 
-### SBT ###
-# Simple Build Tool
-# http://www.scala-sbt.org/release/docs/Getting-Started/Directories.html#configuring-version-control
+# server auth directory
+/server/
 
-target/
-lib_managed/
-src_managed/
-project/boot/
-.history
-.cache
+# projectiles files
+.projectile
+projectile-bookmarks.eld
 
+# directory configuration
+.dir-locals.el
 
-### Eclipse ###
-*.pydevproject
-.metadata
-.gradle
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
+# saveplace
+places
 
-# Eclipse Core
-.project
+# url cache
+url/cache/
 
-# External tool builders
-.externalToolBuilders/
+# cedet
+ede-projects.el
 
-# Locally stored "Eclipse launch configurations"
-*.launch
+# smex
+smex-items
 
-# CDT-specific
-.cproject
+# company-statistics
+company-statistics-cache.el
 
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
-
-# Java annotation processor (APT)
-.factorypath
-
-# PDT-specific
-.buildpath
-
-# sbteclipse plugin
-.target
-
-# TeXlipse plugin
-.texlipse
-
-
-### Scala ###
-*.class
-*.log
-
-# sbt specific
-.cache
-.history
-.lib/
-dist/*
-target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
-
-# Scala-IDE specific
-.scala_dependencies
-.worksheet
-
+# anaconda-mode
+anaconda-mode/
 
 ### Ensime ###
 # Ensime specific
@@ -124,37 +134,35 @@ project/plugins/project/
 .ensime_cache/
 .ensime_lucene/
 
-
-### Intellij ###
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
-
-*.iml
-
-## Directory-based project format:
-.idea/
-# if you remove the above rule, at least ignore the following:
+### Intellij+all ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff:
-# .idea/workspace.xml
-# .idea/tasks.xml
-# .idea/dictionaries
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
 
 # Sensitive or high-churn files:
-# .idea/dataSources.ids
-# .idea/dataSources.xml
-# .idea/sqlDataSources.xml
-# .idea/dynamic.xml
-# .idea/uiDesigner.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
 
 # Gradle:
-# .idea/gradle.xml
-# .idea/libraries
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# CMake
+cmake-build-debug/
 
 # Mongo Explorer plugin:
-# .idea/mongoSettings.xml
+.idea/**/mongoSettings.xml
 
 ## File-based project format:
-*.ipr
 *.iws
 
 ## Plugin-specific files:
@@ -168,9 +176,75 @@ project/plugins/project/
 # JIRA plugin
 atlassian-ide-plugin.xml
 
+# Cursive Clojure plugin
+.idea/replstate.xml
+
+# Ruby plugin and RubyMine
+/.rakeTasks
+
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
+fabric.properties
 
-/bin/
+### Intellij+all Patch ###
+# Ignores the whole idea folder
+# See https://github.com/joeblau/gitignore.io/issues/186 and https://github.com/joeblau/gitignore.io/issues/360
+
+.idea/
+
+### Java ###
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+### SBT ###
+# Simple Build Tool
+# http://www.scala-sbt.org/release/docs/Getting-Started/Directories.html#configuring-version-control
+
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+.history
+.cache
+.lib/
+
+### Scala ###
+
+### Vim ###
+# swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+# session
+Session.vim
+# temporary
+.netrwhist
+# auto-generated tag files
+tags
+
+# End of https://www.gitignore.io/api/sbt,vim,java,scala,emacs,ensime,eclipse,intellij+all
