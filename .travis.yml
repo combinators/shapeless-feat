@@ -1,0 +1,22 @@
+sudo: false
+language: scala
+stages:
+  - test
+  - name: deploy
+    if: branch = master AND NOT type IN (pull_request)
+
+script: sbt +test
+
+jobs:
+  include:
+    - stage: test
+      jdk: oraclejdk8
+    - stage: test
+      jdk: openjdk8
+      script: sbt clean coverage +test && sbt coverageReport coveralls
+    - stage: deploy
+      jdk: openjdk8
+      script: |
+        openssl aes-256-cbc -K $encrypted_3b6b964f9930_key -iv $encrypted_3b6b964f9930_iv -in travis/secrets.tar.enc -out travis/local.secrets.tar -d &&
+          tar xv -C travis -f travis/local.secrets.tar &&
+          sbt +releaseEarly

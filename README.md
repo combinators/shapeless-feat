@@ -1,4 +1,8 @@
 # shapeless-feat
+[![Maven Central](https://img.shields.io/maven-central/v/org.combinators/shapeless-feat_2.12.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.combinators%22%20AND%20%22shapeless-feat%22)
+[![build status](https://travis-ci.org/combinators/cls-scala.svg?branch=master)](https://travis-ci.org/combinators/shapeless-feat)
+[![Coverage Status](https://coveralls.io/repos/github/combinators/shapeless-feat/badge.svg?branch=master)](https://coveralls.io/github/combinators/shapeless-feat?branch=master)
+[![Join the chat at https://gitter.im/combinators/cls-scala](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/combinators/cls-scala)
 ## Shapeless Generic Functional Enumeration of Algebraic Data Types for Scala
 
 This project brings [testing-feat](http://hackage.haskell.org/package/testing-feat) from Haskell over to Scala. The generics approach used in feat fits well with [shapeless](https://github.com/milessabin/shapeless), hence the name and out of the box support for generic programming.
@@ -12,16 +16,16 @@ To obtain the latest version, clone the reopsitory and run sbt and publishLocal.
 
 The current release is available at maven central, just add 
 ```scala
-libraryDependencies += "de.tu_dortmund.cs.ls14" %% "shapeless-feat" % "0.2.1"
+libraryDependencies += "org.combinators" %% "shapeless-feat" % "0.2.1"
 ```
 Currently, Scala 2.11 and 2.12 are supported in the released version.
 
 ## Examples
-Can be found in the [examples project](https://github.com/JanBessai/shapeless-feat/tree/master/examples/src/main/scala) and the [tests](https://github.com/JanBessai/shapeless-feat/tree/master/core/src/test/scala/shapeless/feat).
+Can be found in the [examples project](https://github.com/combinators/shapeless-feat/tree/master/examples/src/main/scala) and the [tests](https://github.com/combinators/shapeless-feat/tree/master/src/test/scala/shapeless/feat).
 
 ## Help and Contributions
 
-There is no Gitter/IRC channel yet, but you might try [shapeless](https://gitter.im/milessabin/shapeless) and find a contributor there.
+Try the Gitter channel of [cls-scala](https://gitter.im/combinators/cls-scala).
 
 ### Contributers
 - Jan Bessai
