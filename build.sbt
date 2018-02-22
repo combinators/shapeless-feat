@@ -1,7 +1,7 @@
 import sbt.{Credentials, Developer, ScmInfo}
 
 lazy val commonSettings = Seq(
-  organization := "de.tu_dortmund.cs.ls14",
+  organization := "org.combinators",
 
   scalaVersion := "2.12.4",
   crossScalaVersions := Seq("2.11.12", scalaVersion.value),
