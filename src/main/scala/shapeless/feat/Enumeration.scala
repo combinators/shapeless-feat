@@ -18,7 +18,7 @@ package shapeless.feat
 
 sealed abstract class Finite[+A] extends Serializable { self =>
   val cardinality: BigInt
-  protected def getChecked(idx: BigInt): A
+  protected [feat] def getChecked(idx: BigInt): A
   def get(idx: BigInt): A =
     if (idx >= BigInt(0) && idx < cardinality) getChecked(idx) else throw new IndexOutOfBoundsException
   final def map[B](f: A => B): Finite[B] =
@@ -109,15 +109,13 @@ object Enumeration {
     }
     
     final def convolute[B](reverseYs: => Enumeration[B] with Enumeration.Reversed): Finite[(A, B)] = {
-      lazy val combined = 
-        (self.parts zip reverseYs.parts).foldLeft((BigInt(0), Finite.empty[(A, B)])){
-          case ((card, elems), (x, y)) =>
-            (card + x.cardinality * y.cardinality, elems :+: (x :*: y))
-        }  
       new Finite[(A, B)] {
-        lazy val cardinality = combined._1
-        def getChecked(idx: BigInt) =
-          combined._2.get(idx)
+        lazy val cardinality =
+          self.parts.view.zip(reverseYs.parts.view).map(x => x._1.cardinality * x._2.cardinality).sum
+        def getChecked(idx: BigInt): (A, B) =
+          self.parts.view.zip(reverseYs.parts.view).foldLeft(Finite.empty[(A, B)]) {
+            case (elems, (x, y)) => elems :+: (x :*: y)
+          }.getChecked(idx)
       }
     }
     
