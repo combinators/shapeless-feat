@@ -146,7 +146,7 @@ object Enumeration {
   }
   
   final def singleton[A](x: A): Enumeration[A] = new Enumeration[A] {
-    lazy val parts = Finite.singleton(x) #:: Stream.empty        
+    lazy val parts = Finite.singleton(x) #:: Stream.empty[Finite[A]]
   }
   
   final lazy val boolEnumeration: Enumeration[Boolean] =
@@ -159,7 +159,7 @@ object Enumeration {
             case 1 => false
             case _ => throw new IndexOutOfBoundsException()
           }
-        } #:: Stream.empty
+        } #:: Stream.empty[Finite[Boolean]]
     }
   
   final lazy val intEnumeration: Enumeration[Int] =
@@ -168,7 +168,7 @@ object Enumeration {
           val cardinality = BigInt(Int.MaxValue) + (-1) * BigInt(Int.MinValue) + 1
           def getChecked(idx: BigInt) =
             (idx % 2 + (if (idx % 2 > 0) 1l else -1l) * (idx / 2)).toInt
-        } #:: Stream.empty
+        } #:: Stream.empty[Finite[Int]]
   }
   
   final lazy val charEnumeration: Enumeration[Char] =
@@ -176,6 +176,6 @@ object Enumeration {
       lazy val parts = new Finite[Char] {
           val cardinality = BigInt(Char.MaxValue) + (-1) * BigInt(Char.MinValue) + 1
           def getChecked(idx: BigInt) = idx.toChar
-        } #:: Stream.empty
+        } #:: Stream.empty[Finite[Char]]
   }
 }
