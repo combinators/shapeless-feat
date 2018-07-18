@@ -43,7 +43,7 @@ package enumerables {
   case class L3() extends Label
   
   sealed trait Tree
-  case class Node(label: Label, children: Seq[Tree]) extends Tree  
+  case class Node(label: Label, children: Seq[Tree]) extends Tree
 }
 
 object EnumerableInstances {
