@@ -23,12 +23,9 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers with MatcherUtil  {
   import EnumerableInstances._
-  
-  
+
   implicit val smallBigInt = Arbitrary(Gen.choose[Int](Int.MinValue, generatorDrivenConfig.sizeRange).map(BigInt(_)))
-  
-  
-    
+
   "Checking algebraic properties" - {
     "index and pay" in {
       forAll { (e: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
