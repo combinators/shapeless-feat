@@ -17,8 +17,8 @@
 package shapeless.feat
 
 import shapeless._
-import scala.collection.generic.CanBuildFrom
-import scala.collection.GenTraversableLike
+
+import VersionCompatibility._
 
 trait Enumerable[T] extends Serializable {
   val enumerate: Enumeration[T]
@@ -64,7 +64,26 @@ trait EnumerableGenericInstances extends EnumerableAlgebraicInstances {
     }
 }
 
-trait EnumerableDefaultInstances extends EnumerableGenericInstances {
+trait EnumerableIterableInstances extends EnumerableGenericInstances {
+  implicit final def enumerateIterable[T, C](implicit
+    conv: C => IterableOnce[T],
+    factory: Factory[T, C],
+    e: Cached[Enumerable[T]]
+  ): Enumerable[C] =
+    new Enumerable[C] {
+      lazy val enumerate: Enumeration[C] =
+        Enumeration
+          .singleton(factory.newBuilder.result())
+          .union(e.value
+            .enumerate
+            .product(enumerate)
+            .map { case (elem, c) => ((factory.newBuilder += elem) ++= c).result})
+          .pay
+    }
+}
+
+
+trait EnumerablePrimitiveInstances {
   implicit val enumerableInt: Enumerable[Int] =
     new Enumerable[Int] {
       lazy val enumerate = Enumeration.intEnumeration
@@ -77,24 +96,8 @@ trait EnumerableDefaultInstances extends EnumerableGenericInstances {
     new Enumerable[Char] {
       lazy val enumerate = Enumeration.charEnumeration
     }
-  
-  implicit final def enumerateTraversable[T, C](implicit
-      conv: C => GenTraversableLike[T, C],
-      cbf: CanBuildFrom[C, T, C],
-      e: Cached[Enumerable[T]]
-  ): Enumerable[C] =
-    new Enumerable[C] {
-      lazy val enumerate: Enumeration[C] =
-        Enumeration
-          .singleton(cbf().result())
-          .union(e.value
-            .enumerate
-            .product(enumerate)
-            .map { case (elem, c) => ((cbf() += elem) ++= c.seq).result})
-          .pay
-    }
 }
 
-object Enumerable extends EnumerableDefaultInstances {
+object Enumerable extends EnumerablePrimitiveInstances with EnumerableIterableInstances {
   def apply[T](implicit e: Enumerable[T]): Enumerable[T] = e
 }

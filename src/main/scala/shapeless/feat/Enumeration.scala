@@ -16,6 +16,8 @@
 
 package shapeless.feat
 
+import VersionCompatibility._
+
 sealed abstract class Finite[+A] extends Serializable { self =>
   val cardinality: BigInt
   protected [feat] def getChecked(idx: BigInt): A
@@ -40,8 +42,8 @@ sealed abstract class Finite[+A] extends Serializable { self =>
         (left.getChecked(idx / self.cardinality), self.getChecked(idx % self.cardinality))
     }
   
-  final def values: Stream[A] =
-    Stream.iterate(BigInt(0))(_ + BigInt(1)).takeWhile(_ < cardinality).map(getChecked)
+  final def values: LazyList[A] =
+    LazyList.iterate(BigInt(0))(_ + BigInt(1)).takeWhile(_ < cardinality).map(getChecked)
 }
 
 object Finite {
@@ -59,7 +61,7 @@ object Finite {
 }
 
 sealed abstract class Enumeration[+A] extends Serializable { self =>
-  def parts: Stream[Finite[A]]
+  def parts: LazyList[Finite[A]]
   final def index(idx: BigInt): A = {
     if (idx < BigInt(0)) throw new IndexOutOfBoundsException(idx.toString)
     var i = idx
@@ -76,7 +78,7 @@ sealed abstract class Enumeration[+A] extends Serializable { self =>
     throw new IndexOutOfBoundsException() 
   }
   
-  final def values: Stream[(BigInt, Stream[A])] =
+  final def values: LazyList[(BigInt, LazyList[A])] =
     parts map (p => (p.cardinality, p.values))
 }
 
@@ -85,7 +87,7 @@ object Enumeration {
   implicit class EnumerationOps[A](self: => Enumeration[A]) extends Serializable {
     final def union[B >: A](e: => Enumeration[B]): Enumeration[B] =
       new Enumeration[B] {
-        private def unfoldParts(l: => Stream[Finite[A]], r: => Stream[Finite[B]]): Stream[Finite[B]] =
+        private def unfoldParts(l: => LazyList[Finite[A]], r: => LazyList[Finite[B]]): LazyList[Finite[B]] =
           if (l.nonEmpty && r.nonEmpty) {
             (l.head :+: r.head) #:: unfoldParts(l.tail, r.tail)
           } else {
@@ -97,15 +99,15 @@ object Enumeration {
     final def map[B](f: A => B): Enumeration[B] =
       new Enumeration[B] { lazy val parts = self.parts map (p => p map f) }
     
-    final def reversals: Stream[Enumeration[A] with Enumeration.Reversed] = {
-      def go(rev: => Stream[Finite[A]], xs: => Stream[Finite[A]]): Stream[Stream[Finite[A]]] =
+    final def reversals: LazyList[Enumeration[A] with Enumeration.Reversed] = {
+      def go(rev: => LazyList[Finite[A]], xs: => LazyList[Finite[A]]): LazyList[LazyList[Finite[A]]] =
         if (xs.nonEmpty) {
           lazy val revWithX = xs.head #:: rev
           revWithX #:: go(revWithX, xs.tail)
         } else {
-          Stream.empty
+          LazyList.empty
         }
-      go(Stream.empty, self.parts) map (ps => new Enumeration[A] with Enumeration.Reversed { lazy val parts = ps }) 
+      go(LazyList.empty, self.parts) map (ps => new Enumeration[A] with Enumeration.Reversed { lazy val parts = ps })
     }
     
     final def convolute[B](reverseYs: => Enumeration[B] with Enumeration.Reversed): Finite[(A, B)] = {
@@ -119,19 +121,19 @@ object Enumeration {
       }
     }
     
-    final private def productRev[B](reverseYss: => Stream[Enumeration[B] with Enumeration.Reversed]): Enumeration[(A, B)] ={
-      def go(ry: => Enumeration[B] with Enumeration.Reversed, rys: => Stream[Enumeration[B] with Enumeration.Reversed]): Enumeration[(A, B)] =
+    final private def productRev[B](reverseYss: => LazyList[Enumeration[B] with Enumeration.Reversed]): Enumeration[(A, B)] ={
+      def go(ry: => Enumeration[B] with Enumeration.Reversed, rys: => LazyList[Enumeration[B] with Enumeration.Reversed]): Enumeration[(A, B)] =
         new Enumeration[(A, B)] {
           lazy val parts = self.convolute(ry) #:: (
               if (rys.nonEmpty) {
                 go(rys.head, rys.tail).parts
               } else {
-                self.parts.tail.tails.map(x => new Enumeration[A] { lazy val parts = x }.convolute(ry)).toStream
+                LazyList.from[Finite[(A, B)]](self.parts.tail.tails.map(x => new Enumeration[A] { lazy val parts = x }.convolute(ry)))
               })
         }
       if (self.parts.nonEmpty && reverseYss.nonEmpty) {
         go(reverseYss.head, reverseYss.tail)
-      } else new Enumeration[(A, B)] { lazy val parts = Stream.empty }
+      } else new Enumeration[(A, B)] { lazy val parts = LazyList.empty }
     }
     
     final def product[B](y: => Enumeration[B]): Enumeration[(A, B)] =
@@ -142,11 +144,11 @@ object Enumeration {
   }
   
   final def empty[A]: Enumeration[A] = new Enumeration[A] {
-    lazy val parts = Stream.empty[Finite[A]] 
+    lazy val parts = LazyList.empty[Finite[A]]
   }
   
   final def singleton[A](x: A): Enumeration[A] = new Enumeration[A] {
-    lazy val parts = Finite.singleton(x) #:: Stream.empty[Finite[A]]
+    lazy val parts = Finite.singleton(x) #:: LazyList.empty[Finite[A]]
   }
   
   final lazy val boolEnumeration: Enumeration[Boolean] =
@@ -159,16 +161,17 @@ object Enumeration {
             case 1 => false
             case _ => throw new IndexOutOfBoundsException()
           }
-        } #:: Stream.empty[Finite[Boolean]]
+        } #:: LazyList.empty[Finite[Boolean]]
     }
   
   final lazy val intEnumeration: Enumeration[Int] =
     new Enumeration[Int] {
       lazy val parts = new Finite[Int] {
           val cardinality = BigInt(Int.MaxValue) + (-1) * BigInt(Int.MinValue) + 1
-          def getChecked(idx: BigInt) =
-            (idx % 2 + (if (idx % 2 > 0) 1l else -1l) * (idx / 2)).toInt
-        } #:: Stream.empty[Finite[Int]]
+          def getChecked(idx: BigInt): Int = {
+            (idx % 2 + (if (idx % 2 > 0) BigInt(1) else BigInt(-1)) * (idx / 2)).toInt
+          }
+        } #:: LazyList.empty[Finite[Int]]
   }
   
   final lazy val charEnumeration: Enumeration[Char] =
@@ -176,6 +179,6 @@ object Enumeration {
       lazy val parts = new Finite[Char] {
           val cardinality = BigInt(Char.MaxValue) + (-1) * BigInt(Char.MinValue) + 1
           def getChecked(idx: BigInt) = idx.toChar
-        } #:: Stream.empty[Finite[Char]]
+        } #:: LazyList.empty[Finite[Char]]
   }
 }
