@@ -13,6 +13,10 @@ jobs:
       jdk: oraclejdk8
     - stage: test
       jdk: openjdk8
+    - stage: test
+      jdk: oraclejdk11
+    - stage: test
+      jdk: openjdk11
       script: sbt clean coverage +test && sbt coverageReport coveralls
     - stage: deploy
       jdk: openjdk8

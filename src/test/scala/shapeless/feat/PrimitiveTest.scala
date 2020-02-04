@@ -17,9 +17,9 @@
 package shapeless.feat
 
 import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class PrimitiveTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers  {
+class PrimitiveTest extends FreeSpec with ScalaCheckDrivenPropertyChecks with Matchers  {
   
   "Enumerating Booleans" - {
     "checking true, false" in {

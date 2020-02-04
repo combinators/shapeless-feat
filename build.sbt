@@ -3,15 +3,15 @@ import sbt.{Credentials, Developer, ScmInfo}
 lazy val commonSettings = Seq(
   organization := "org.combinators",
 
-  scalaVersion := "2.12.6",
-  crossScalaVersions := Seq("2.11.12", "2.13.0-M4", scalaVersion.value),
+  scalaVersion := "2.12.9",
+  crossScalaVersions := Seq("2.11.12", "2.12.9", scalaVersion.value),
 
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots")
   ),
 
-  headerLicense := Some(HeaderLicense.ALv2("2018", "Jan Bessai")),
+  headerLicense := Some(HeaderLicense.ALv2("2018-2019", "Jan Bessai")),
 
   scalacOptions ++= Seq(
     "-unchecked",
@@ -28,7 +28,9 @@ lazy val root = Project(id = "shapeless-feat", base = file(".")).
   settings(
     moduleName := "shapeless-feat",
     libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.3",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.6-SNAP1" % "test",
+    libraryDependencies += "org.typelevel" %% "cats-core" % "2.0.0",
+    libraryDependencies += "org.typelevel" %% "cats-free" % "2.0.0",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test",
     libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0" % "test",
     unmanagedSourceDirectories in Compile += {
       val sourceDir = (sourceDirectory in Compile).value

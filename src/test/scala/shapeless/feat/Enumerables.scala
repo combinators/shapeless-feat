@@ -74,29 +74,31 @@ object EnumerableInstances {
   val enumerableBoolean = Enumerable[Boolean]
   
   val enumerableListBoolean = Enumerable[List[Boolean]]
+
+  case class Tag(tagName: String)
   
-  val testingEnumerables: Map[Symbol, Enumerable[_ <: Any]] = Map(
-      'enumerableInt -> enumerableInt,
-      'enumerableChar -> enumerableChar,
-      'enumerableBoolean -> enumerableBoolean,
-      'enumerableListBoolean -> enumerableListBoolean,
-      'nonRec -> nonRec,
-      'nonRecA -> nonRecA,
-      'nonRecB -> nonRecB,
-      'rec -> rec,
-      'recA -> recA,
-      'recB -> recB,
-      'mutualRec1 -> mutualRec1,
-      'mutualRec1A -> mutualRec1A,
-      'mutualRec1B -> mutualRec1B,
-      'mutualRec2 -> mutualRec2,
-      'mutualRec2A -> mutualRec2A,
-      'mutualRec2B -> mutualRec2B,
-      'tree -> tree,
-      'node -> node
+  val testingEnumerables: Map[Tag, Enumerable[_ <: Any]] = Map[Tag, Enumerable[_ <: Any]](
+      Tag("enumerableInt") -> enumerableInt,
+      Tag("enumerableChar") -> enumerableChar,
+      Tag("enumerableBoolean") -> enumerableBoolean,
+      Tag("enumerableListBoolean") -> enumerableListBoolean,
+      Tag("nonRec") -> nonRec,
+      Tag("nonRecA") -> nonRecA,
+      Tag("nonRecB") -> nonRecB,
+      Tag("rec") -> rec,
+      Tag("recA") -> recA,
+      Tag("recB") -> recB,
+      Tag("mutualRec1") -> mutualRec1,
+      Tag("mutualRec1A") -> mutualRec1A,
+      Tag("mutualRec1B") -> mutualRec1B,
+      Tag("mutualRec2") -> mutualRec2,
+      Tag("mutualRec2A") -> mutualRec2A,
+      Tag("mutualRec2B") -> mutualRec2B,
+      Tag("tree") -> tree,
+      Tag("node") -> node
     )
 
-  implicit lazy val arbEnumerable: Arbitrary[(Symbol, Enumerable[_ <: Any])] = 
+  implicit lazy val arbEnumerable: Arbitrary[(Tag, Enumerable[_ <: Any])] =
     Arbitrary(Gen.oneOf(testingEnumerables.toSeq))
 }
 
@@ -109,7 +111,7 @@ object ArbitraryInstances {
   implicit lazy val arbRec: Arbitrary[Rec] = Arbitrary[Rec] {
     def genRec(size: Int): Gen[Rec] =
       if (size <= 0) Gen.const(RecB())
-      else Gen.frequency((1, Gen.const(RecB())), (3, genRec(size - 1).map(RecA(_))))
+      else Gen.frequency((1, Gen.const(RecB())), (3, genRec(size - 1).map(RecA)))
     
     Gen.sized(genRec)
   }
@@ -123,7 +125,7 @@ object ArbitraryInstances {
       if (size <= 0) Gen.const(MutualRec2B())
       else Gen.frequency(
           (1, Gen.const(MutualRec2B())), 
-          (3, genMutualRec1(size - 1).map(MutualRec2A(_))))
+          (3, genMutualRec1(size - 1).map(MutualRec2A)))
           
   implicit lazy val arbMutualRec1: Arbitrary[MutualRec1] = Arbitrary(Gen.sized(genMutualRec1))
   implicit lazy val arbMutualRec2: Arbitrary[MutualRec2] = Arbitrary(Gen.sized(genMutualRec2))

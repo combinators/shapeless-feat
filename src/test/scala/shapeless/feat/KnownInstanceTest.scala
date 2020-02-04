@@ -17,9 +17,9 @@
 package shapeless.feat
 
 import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class KnownInstanceTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers {
+class KnownInstanceTest extends FreeSpec with ScalaCheckDrivenPropertyChecks with Matchers {
   import enumerables._
   import ArbitraryInstances._
   import EnumerableInstances._

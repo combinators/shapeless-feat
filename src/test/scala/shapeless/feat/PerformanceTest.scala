@@ -19,16 +19,16 @@ package shapeless.feat
 import org.scalatest._
 import org.scalatest.concurrent._
 import org.scalatest.time.SpanSugar._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 
-class PerformanceTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers with MatcherUtil with TimeLimits {
+class PerformanceTest extends FreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil with TimeLimits {
   import EnumerableInstances._
   
   "Checking performance" - {
     "Requesting index 2000" in {
       System.gc() // Try to avoid overflows in repeated sbt runs
-      forAll { (e: (Symbol, Enumerable[_ <: Any])) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any])) =>
         failAfter(10 seconds) {
           e._2.enumerate should (equalOrExceptAtIndex[Any](2000)(e._2.enumerate))
         }
