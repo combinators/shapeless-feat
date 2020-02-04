@@ -93,11 +93,11 @@ object Enumeration {
           } else {
             l #::: r
           }
-        lazy val parts = unfoldParts(self.parts, e.parts)
+        @transient lazy val parts = unfoldParts(self.parts, e.parts)
       }
     
     final def map[B](f: A => B): Enumeration[B] =
-      new Enumeration[B] { lazy val parts = self.parts map (p => p map f) }
+      new Enumeration[B] { @transient lazy val parts = self.parts map (p => p map f) }
     
     final def reversals: LazyList[Enumeration[A] with Enumeration.Reversed] = {
       def go(rev: => LazyList[Finite[A]], xs: => LazyList[Finite[A]]): LazyList[LazyList[Finite[A]]] =
@@ -107,7 +107,7 @@ object Enumeration {
         } else {
           LazyList.empty
         }
-      go(LazyList.empty, self.parts) map (ps => new Enumeration[A] with Enumeration.Reversed { lazy val parts = ps })
+      go(LazyList.empty, self.parts) map (ps => new Enumeration[A] with Enumeration.Reversed { @transient lazy val parts = ps })
     }
     
     final def convolute[B](reverseYs: => Enumeration[B] with Enumeration.Reversed): Finite[(A, B)] = {
@@ -124,36 +124,36 @@ object Enumeration {
     final private def productRev[B](reverseYss: => LazyList[Enumeration[B] with Enumeration.Reversed]): Enumeration[(A, B)] ={
       def go(ry: => Enumeration[B] with Enumeration.Reversed, rys: => LazyList[Enumeration[B] with Enumeration.Reversed]): Enumeration[(A, B)] =
         new Enumeration[(A, B)] {
-          lazy val parts = self.convolute(ry) #:: (
+          @transient lazy val parts = self.convolute(ry) #:: (
               if (rys.nonEmpty) {
                 go(rys.head, rys.tail).parts
               } else {
-                LazyList.from[Finite[(A, B)]](self.parts.tail.tails.map(x => new Enumeration[A] { lazy val parts = x }.convolute(ry)))
+                LazyList.from[Finite[(A, B)]](self.parts.tail.tails.map(x => new Enumeration[A] { @transient lazy val parts = x }.convolute(ry)))
               })
         }
       if (self.parts.nonEmpty && reverseYss.nonEmpty) {
         go(reverseYss.head, reverseYss.tail)
-      } else new Enumeration[(A, B)] { lazy val parts = LazyList.empty }
+      } else new Enumeration[(A, B)] { @transient lazy val parts = LazyList.empty }
     }
     
     final def product[B](y: => Enumeration[B]): Enumeration[(A, B)] =
       productRev(y.reversals)
     
     final def pay: Enumeration[A] =
-      new Enumeration[A] { lazy val parts = Finite.empty #:: self.parts }
+      new Enumeration[A] { @transient lazy val parts = Finite.empty #:: self.parts }
   }
   
   final def empty[A]: Enumeration[A] = new Enumeration[A] {
-    lazy val parts = LazyList.empty[Finite[A]]
+    @transient lazy val parts = LazyList.empty[Finite[A]]
   }
   
   final def singleton[A](x: A): Enumeration[A] = new Enumeration[A] {
-    lazy val parts = Finite.singleton(x) #:: LazyList.empty[Finite[A]]
+    @transient lazy val parts = Finite.singleton(x) #:: LazyList.empty[Finite[A]]
   }
   
   final lazy val boolEnumeration: Enumeration[Boolean] =
     new Enumeration[Boolean] {
-      lazy val parts = new Finite[Boolean] {
+      @transient lazy val parts = new Finite[Boolean] {
         val cardinality = BigInt(2)
         def getChecked(idx: BigInt) =
           idx.toInt match {
@@ -166,7 +166,7 @@ object Enumeration {
   
   final lazy val intEnumeration: Enumeration[Int] =
     new Enumeration[Int] {
-      lazy val parts = new Finite[Int] {
+      @transient lazy val parts = new Finite[Int] {
           val cardinality = BigInt(Int.MaxValue) + (-1) * BigInt(Int.MinValue) + 1
           def getChecked(idx: BigInt): Int = {
             (idx % 2 + (if (idx % 2 > 0) BigInt(1) else BigInt(-1)) * (idx / 2)).toInt
@@ -176,7 +176,7 @@ object Enumeration {
   
   final lazy val charEnumeration: Enumeration[Char] =
     new Enumeration[Char] {
-      lazy val parts = new Finite[Char] {
+      @transient lazy val parts = new Finite[Char] {
           val cardinality = BigInt(Char.MaxValue) + (-1) * BigInt(Char.MinValue) + 1
           def getChecked(idx: BigInt) = idx.toChar
         } #:: LazyList.empty[Finite[Char]]
