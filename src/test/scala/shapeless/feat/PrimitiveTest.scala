@@ -64,4 +64,16 @@ class PrimitiveTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with
       }
     }
   }
+
+  "Enumerating Nothing" - {
+    "checking emptiness" in {
+      Enumerable[shapeless.CNil].enumerate.parts shouldBe empty
+    }
+    "should cancel products" in {
+      Enumerable[(shapeless.CNil, Boolean)].enumerate.values.flatMap(_._2) shouldBe empty 
+    }
+    "should not cancel coproducts" in {
+      Enumerable[Either[Unit, shapeless.CNil]].enumerate.values.flatMap(_._2) shouldBe Enumerable[Unit].enumerate.map(x => Left[Unit, shapeless.CNil](x)).values.flatMap(_._2)
+    }
+  }
 }
