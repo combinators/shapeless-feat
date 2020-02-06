@@ -10,8 +10,6 @@ script: sbt +test
 jobs:
   include:
     - stage: test
-      jdk: oraclejdk8
-    - stage: test
       jdk: openjdk8
     - stage: test
       jdk: oraclejdk11
