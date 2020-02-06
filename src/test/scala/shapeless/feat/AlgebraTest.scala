@@ -19,10 +19,12 @@ import scala.util.Try
 import org.scalatest._
 import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+//import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class AlgebraTest extends FreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil  {
+class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil  {
   import EnumerableInstances._
 
   implicit val smallBigInt = Arbitrary(Gen.choose[Int](Int.MinValue, generatorDrivenConfig.sizeRange).map(BigInt(_)))

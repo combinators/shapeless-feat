@@ -16,10 +16,11 @@
 
 package shapeless.feat
 
-import org.scalatest._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class KnownInstanceTest extends FreeSpec with ScalaCheckDrivenPropertyChecks with Matchers {
+class KnownInstanceTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers {
   import enumerables._
   import ArbitraryInstances._
   import EnumerableInstances._

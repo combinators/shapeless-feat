@@ -16,7 +16,8 @@
 
 package shapeless.feat
 import org.scalatest._
-import org.scalatest.matchers._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.Matcher
 
 trait MatcherUtil { self : Matchers =>
   def equalOrExceptAtIndex[T](i: BigInt)(y: Enumeration[T]) = new Matcher[Enumeration[T]] {

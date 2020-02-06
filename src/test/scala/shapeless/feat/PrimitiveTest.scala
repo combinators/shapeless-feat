@@ -18,8 +18,10 @@ package shapeless.feat
 
 import org.scalatest._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class PrimitiveTest extends FreeSpec with ScalaCheckDrivenPropertyChecks with Matchers  {
+class PrimitiveTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers  {
   
   "Enumerating Booleans" - {
     "checking true, false" in {

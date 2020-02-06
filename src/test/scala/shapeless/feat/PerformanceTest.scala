@@ -20,9 +20,11 @@ import org.scalatest._
 import org.scalatest.concurrent._
 import org.scalatest.time.SpanSugar._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
 
-class PerformanceTest extends FreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil with TimeLimits {
+class PerformanceTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil with TimeLimits {
   import EnumerableInstances._
   
   "Checking performance" - {
