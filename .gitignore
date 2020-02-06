@@ -287,3 +287,5 @@ tags
 .vim
 
 # End of https://www.gitignore.io/api/sbt,vim,java,scala,emacs,ensime,eclipse,intellij+all,bloop,metals
+
+project/metals.sbt
