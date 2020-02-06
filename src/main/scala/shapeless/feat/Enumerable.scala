@@ -25,29 +25,32 @@ trait Enumerable[T] extends Serializable {
 }
 
 trait EnumerableAlgebraicInstances {
-  implicit final def enumerableConsProduct[H, T <: HList](implicit 
+  implicit final def enumerableConsProduct[H, T <: HList](
+      implicit
       eh: Cached[Enumerable[H]],
       et: Cached[Enumerable[T]]
-  ): Enumerable[H::T] =
-    new Enumerable[H::T] {
+  ): Enumerable[H :: T] =
+    new Enumerable[H :: T] {
       lazy val enumerate =
-          eh.value.enumerate.product(et.value.enumerate).map {
-              case (h, t) => h::t 
-            }
+        eh.value.enumerate.product(et.value.enumerate).map {
+          case (h, t) => h :: t
+        }
     }
   implicit val enumerableNilProduct: Enumerable[HNil] =
     new Enumerable[HNil] {
-      lazy val enumerate = Enumeration.singleton(HNil) 
+      lazy val enumerate = Enumeration.singleton(HNil)
     }
-   
-  implicit final def enumerableConsCoproduct[H, T <: Coproduct](implicit
+
+  implicit final def enumerableConsCoproduct[H, T <: Coproduct](
+      implicit
       eh: Cached[Enumerable[H]],
       et: Cached[Enumerable[T]]
-  ): Enumerable[H:+:T] =
-    new Enumerable[H:+:T] {
-      lazy val enumerate = eh.value.enumerate.map(Inl(_)).union(et.value.enumerate.map(Inr(_)))
+  ): Enumerable[H :+: T] =
+    new Enumerable[H :+: T] {
+      lazy val enumerate =
+        eh.value.enumerate.map(Inl(_)).union(et.value.enumerate.map(Inr(_)))
     }
-  
+
   implicit val enumerableNilCoproduct: Enumerable[CNil] =
     new Enumerable[CNil] {
       lazy val enumerate = Enumeration.empty
@@ -55,7 +58,8 @@ trait EnumerableAlgebraicInstances {
 }
 
 trait EnumerableGenericInstances extends EnumerableAlgebraicInstances {
-  implicit def enumerableGeneric[T, L](implicit
+  implicit def enumerableGeneric[T, L](
+      implicit
       gen: Generic.Aux[T, L],
       el: Cached[Lazy[Enumerable[L]]]
   ): Enumerable[T] =
@@ -65,23 +69,26 @@ trait EnumerableGenericInstances extends EnumerableAlgebraicInstances {
 }
 
 trait EnumerableIterableInstances extends EnumerableGenericInstances {
-  implicit final def enumerateIterable[T, C](implicit
-    conv: C => IterableOnce[T],
-    factory: Factory[T, C],
-    e: Cached[Enumerable[T]]
+  implicit final def enumerateIterable[T, C](
+      implicit
+      conv: C => IterableOnce[T],
+      factory: Factory[T, C],
+      e: Cached[Enumerable[T]]
   ): Enumerable[C] =
     new Enumerable[C] {
       lazy val enumerate: Enumeration[C] =
         Enumeration
           .singleton(factory.newBuilder.result())
-          .union(e.value
-            .enumerate
-            .product(enumerate)
-            .map { case (elem, c) => ((factory.newBuilder += elem) ++= c).result})
+          .union(
+            e.value.enumerate
+              .product(enumerate)
+              .map {
+                case (elem, c) => ((factory.newBuilder += elem) ++= c).result
+              }
+          )
           .pay
     }
 }
-
 
 trait EnumerablePrimitiveInstances {
   implicit val enumerableInt: Enumerable[Int] =
@@ -98,6 +105,8 @@ trait EnumerablePrimitiveInstances {
     }
 }
 
-object Enumerable extends EnumerablePrimitiveInstances with EnumerableIterableInstances {
+object Enumerable
+    extends EnumerablePrimitiveInstances
+    with EnumerableIterableInstances {
   def apply[T](implicit e: Enumerable[T]): Enumerable[T] = e
 }
