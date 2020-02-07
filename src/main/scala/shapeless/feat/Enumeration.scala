@@ -19,63 +19,6 @@ package shapeless.feat
 import scala.annotation.tailrec
 import VersionCompatibility._
 
-sealed protected[feat] trait Stream[+A] {
-  def isEmpty: Boolean
-  def nonEmpty: Boolean = !isEmpty
-  def head: A
-  def tail: Stream[A]
-  def toLazyList: LazyList[A]
-  def append[B >: A](other: => Stream[B]): Stream[B]
-  def map[B](f: A => B): Stream[B]
-  def zip[B](other: Stream[B]): Stream[(A, B)]
-  final def foldLeft[B](start: B)(f: (B, A) => B): B = {
-    var result = start
-    var current = this
-    while (current.nonEmpty) {
-      result = f(result, current.head)
-      current = current.tail
-    }
-    result
-  }
-  def tails: Stream[Stream[A]]
-}
-
-protected[feat] object Stream {
-  private final case object EmptyStream extends Stream[Nothing] {
-    override def isEmpty: Boolean = true
-    override def head: Nothing =
-      throw new java.util.NoSuchElementException("head of empty stream")
-    override def tail: Stream[Nothing] = this
-    override def toLazyList: LazyList[Nothing] = LazyList.empty[Nothing]
-    override def append[B](other: => Stream[B]): Stream[B] = other
-    override def map[B](f: Nothing => B): Stream[B] = this
-    override def zip[B](other: Stream[B]): Stream[(Nothing, B)] = this
-    override def tails: Stream[Stream[Nothing]] = this
-  }
-
-  private final case class Cons[A](elem: A, rest: () => Stream[A])
-      extends Stream[A] {
-    override def isEmpty: Boolean = false
-    override val head = elem
-    override lazy val tail = rest()
-    override def toLazyList: LazyList[A] = elem #:: tail.toLazyList
-    override def append[B >: A](other: => Stream[B]): Stream[B] =
-      Cons(elem, () => tail.append(other))
-    override def map[B](f: A => B): Stream[B] =
-      Cons(f(elem), () => tail.map(f))
-    override def zip[B](other: Stream[B]): Stream[(A, B)] = {
-      if (other.isEmpty) EmptyStream
-      else Cons((elem, other.head), () => tail.zip(other.tail))
-    }
-    override def tails: Stream[Stream[A]] =
-      Cons(this, () => tail.tails)
-  }
-
-  protected[feat] def empty[A]: Stream[A] = EmptyStream
-  protected[feat] def cons[A](head: A, tail: => Stream[A]): Stream[A] =
-    Cons(head, () => tail)
-}
-
 sealed abstract class Finite[+A] extends Serializable { self =>
   val cardinality: BigInt
   protected[feat] def getChecked(idx: BigInt): A
