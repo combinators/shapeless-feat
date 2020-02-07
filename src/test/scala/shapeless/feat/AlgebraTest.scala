@@ -19,7 +19,6 @@ import scala.util.Try
 import org.scalatest._
 import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
-//import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
@@ -86,6 +85,40 @@ class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with M
       forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
         e._2.enumerate.map(Left(_)).union(Enumeration.empty) should
           equalOrExceptAtIndex(i)(e._2.enumerate.map(Left(_)))
+      }
+    }
+    "empty enumerations cancel products" in {
+      forAll { (e: (Tag, Enumerable[_ <: Any])) =>
+        val allParts =
+          (0 to generatorDrivenConfig.sizeRange)
+            .map (idx => Try(e._2.enumerate.product(Enumeration.empty).parts(idx)))
+            .filter (_.isSuccess)
+            .map (_.get)
+        allParts.foreach { (part: Finite[_ <: Any]) =>
+          part.cardinality shouldBe 0
+        }
+      }
+    }
+    "empty enumerations are ignored by unions" in {
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
+        e._2.enumerate.union(Enumeration.empty) should
+          equalOrExceptAtIndex(i)(e._2.enumerate)
+      }
+    }
+    "indexing in- and outside of range" in {
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
+        val allParts =
+          (0 to generatorDrivenConfig.sizeRange)
+            .map (idx => Try(e._2.enumerate.parts(idx)))
+            .filter (_.isSuccess)
+            .map (_.get)
+        allParts.foreach { (part: Finite[_ <: Any]) =>
+          if (i < 0 || i > part.cardinality) {
+            an [IndexOutOfBoundsException] should be thrownBy part.get(i)
+          } else {
+            noException should be thrownBy part.get(i)
+          }
+        }
       }
     }
   }
