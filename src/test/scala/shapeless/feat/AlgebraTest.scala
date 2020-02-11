@@ -1,11 +1,11 @@
-/* 
- * Copyright (c) 2015 Jan Bessai
+/*
+ * Copyright 2018-2020 Jan Bessai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,24 +19,23 @@ import scala.util.Try
 import org.scalatest._
 import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers with MatcherUtil  {
+class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil  {
   import EnumerableInstances._
-  
-  
+
   implicit val smallBigInt = Arbitrary(Gen.choose[Int](Int.MinValue, generatorDrivenConfig.sizeRange).map(BigInt(_)))
-  
-  
-    
+
   "Checking algebraic properties" - {
     "index and pay" in {
-      forAll { (e: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
          e._2.enumerate should equalOrExceptAtIndex(i)(e._2.enumerate.pay)
       }
     }
     "index injective" in {
-      forAll { (e: (Symbol, Enumerable[_ <: Any])) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any])) =>
         val allElements =
           (0 to generatorDrivenConfig.sizeRange)
             .map (idx => Try(e._2.enumerate.index(idx)))
@@ -46,46 +45,80 @@ class AlgebraTest extends FreeSpec with GeneratorDrivenPropertyChecks with Match
       }
     }
     "pay sum distributive" in {
-      forAll { (e1: (Symbol, Enumerable[_ <: Any]), e2: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
+      forAll { (e1: (Tag, Enumerable[_ <: Any]), e2: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
         e1._2.enumerate.union(e2._2.enumerate).pay should
           equalOrExceptAtIndex[Any](i)(e1._2.enumerate.pay.union(e2._2.enumerate.pay))
       }
     }
     "pay product distributive" in {
-      forAll { (e1: (Symbol, Enumerable[_ <: Any]), e2: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
+      forAll { (e1: (Tag, Enumerable[_ <: Any]), e2: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
         e1._2.enumerate.product(e2._2.enumerate).pay should 
           (equalOrExceptAtIndex[(Any, Any)](i)(e1._2.enumerate.pay.product(e2._2.enumerate)) and
            equalOrExceptAtIndex[(Any, Any)](i)(e1._2.enumerate.product(e2._2.enumerate.pay)))
       }
     }
     "map preserves composition" in {
-      forAll { (e: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
         e._2.enumerate.map(_.toString).map(_.hashCode) should
           equalOrExceptAtIndex(i)(e._2.enumerate.map(_.toString.hashCode))
       }
     }
     "map lifts product right" in {
-      forAll { (e: (Symbol, Enumerable[_ <: Any]), x: Boolean, i: BigInt) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any]), x: Boolean, i: BigInt) =>
         e._2.enumerate.product(Enumeration.singleton(x)) should
           equalOrExceptAtIndex[(Any, Any)](i)(e._2.enumerate.map((y : Any) => (y, x)))
       }
     }
     "map lifts product left" in {
-      forAll { (e: (Symbol, Enumerable[_ <: Any]), x: Boolean, i: BigInt) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any]), x: Boolean, i: BigInt) =>
         Enumeration.singleton(x).product(e._2.enumerate) should
           equalOrExceptAtIndex[(Any, Any)](i)(e._2.enumerate.map((y : Any) => (x, y)))
       }
     }
     "map lifts sum right" in {
-      forAll { (e: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
         Enumeration.empty.union(e._2.enumerate.map(Right(_))) should
           equalOrExceptAtIndex[Any](i)(e._2.enumerate.map(Right(_)))
       }
     }
     "map lifts sum left" in {
-      forAll { (e: (Symbol, Enumerable[_ <: Any]), i: BigInt) =>
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
         e._2.enumerate.map(Left(_)).union(Enumeration.empty) should
           equalOrExceptAtIndex(i)(e._2.enumerate.map(Left(_)))
+      }
+    }
+    "empty enumerations cancel products" in {
+      forAll { (e: (Tag, Enumerable[_ <: Any])) =>
+        val allParts =
+          (0 to generatorDrivenConfig.sizeRange)
+            .map (idx => Try(e._2.enumerate.product(Enumeration.empty).parts(idx)))
+            .filter (_.isSuccess)
+            .map (_.get)
+        allParts.foreach { (part: Finite[_ <: Any]) =>
+          part.cardinality shouldBe 0
+        }
+      }
+    }
+    "empty enumerations are ignored by unions" in {
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
+        e._2.enumerate.union(Enumeration.empty) should
+          equalOrExceptAtIndex(i)(e._2.enumerate)
+      }
+    }
+    "indexing in- and outside of range" in {
+      forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
+        val allParts =
+          (0 to generatorDrivenConfig.sizeRange)
+            .map (idx => Try(e._2.enumerate.parts(idx)))
+            .filter (_.isSuccess)
+            .map (_.get)
+        allParts.foreach { (part: Finite[_ <: Any]) =>
+          if (i < 0 || i > part.cardinality) {
+            an [IndexOutOfBoundsException] should be thrownBy part.get(i)
+          } else {
+            noException should be thrownBy part.get(i)
+          }
+        }
       }
     }
   }

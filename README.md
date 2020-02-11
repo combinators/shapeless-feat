@@ -16,7 +16,7 @@ The current release is available at maven central, just add
 ```scala
 libraryDependencies += "org.combinators" %% "shapeless-feat" % "VERSIONNUMBER"
 ```
-Currently, Scala 2.11 and 2.12 are supported in the released version.
+Currently, Scala 2.11, 2.12, and 2.13 are supported in the released version.
 
 ## Examples
 Can be found in the [examples project](https://github.com/combinators/shapeless-feat/tree/master/examples/src/main/scala) and the [tests](https://github.com/combinators/shapeless-feat/tree/master/src/test/scala/shapeless/feat).

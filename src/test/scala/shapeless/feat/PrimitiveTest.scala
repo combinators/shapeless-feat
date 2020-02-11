@@ -1,11 +1,11 @@
-/* 
- * Copyright (c) 2015 Jan Bessai
+/*
+ * Copyright 2018-2020 Jan Bessai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,11 @@
 package shapeless.feat
 
 import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class PrimitiveTest extends FreeSpec with GeneratorDrivenPropertyChecks with Matchers  {
+class PrimitiveTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers  {
   
   "Enumerating Booleans" - {
     "checking true, false" in {
@@ -60,6 +62,18 @@ class PrimitiveTest extends FreeSpec with GeneratorDrivenPropertyChecks with Mat
             index should (be <= BigInt(0) or be >= BigInt(Char.MaxValue))
         }
       }
+    }
+  }
+
+  "Enumerating Nothing" - {
+    "checking emptiness" in {
+      Enumerable[shapeless.CNil].enumerate.parts shouldBe empty
+    }
+    "should cancel products" in {
+      Enumerable[(shapeless.CNil, Boolean)].enumerate.values.flatMap(_._2) shouldBe empty 
+    }
+    "should not cancel coproducts" in {
+      Enumerable[Either[Unit, shapeless.CNil]].enumerate.values.flatMap(_._2) shouldBe Enumerable[Unit].enumerate.map(x => Left[Unit, shapeless.CNil](x)).values.flatMap(_._2)
     }
   }
 }
