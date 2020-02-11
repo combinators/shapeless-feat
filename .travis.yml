@@ -1,9 +1,13 @@
 sudo: false
 language: scala
+
+before_install:
+  - git fetch --tags
+
 stages:
   - test
   - name: deploy
-    if: branch = master AND NOT type IN (pull_request)
+    if: ((branch = master AND type = push) OR (tag IS present)) AND NOT fork
 
 script: sbt +test
 
@@ -17,11 +21,11 @@ jobs:
       jdk: openjdk11
       script: sbt clean coverage +test && sbt coverageReport coveralls
     - stage: deploy
-      jdk: openjdk8
+      jdk: openjdk11
       script: |
         openssl aes-256-cbc -K $encrypted_15ce06f7b2e5_key -iv $encrypted_15ce06f7b2e5_iv -in travis/secrets.tar.enc -out travis/local.secrets.tar -d &&
           tar xv -C travis -f travis/local.secrets.tar &&
-          sbt +releaseEarly
+          sbt ci-release
 env:
   global:
     - secure: "e/Doy2GpbQxUUdJ/51wlBs+WSiozVSyuGjzo+kr8hp7h6Qa5dEmsUi82jShrs2fDVW27Ivmph08Yr4JnosWlkrW08Hz1tFrXDdauDXSwBkL54wdcriUWWKDmhtJ10y6NfB5xhU2xph+kUM04oT5v3EsN5adrIg7VkSDP12k8PPR1Aup4AR9cyI3kWkkK4IP13XMMam/p0cXrSDH20KJbDONFG3yjP1YN34TGlC/D6i1TvIP5+GEPR0oX4YMAHw8vZHCIokslSpjcegOQxLVP58SC8v4WIBIJ/D6Z24itBzQrrp4IhCIXUVp+Y2JE4nVSAXWVKuP7bs/NY+U7zr5GJVD7nE6m2YmEkjV/Q8dFhemIYLgPSDW7uAo8vpC8J76C0CA/+59nKNrmXRz4JqnH6FQbBfU2tpFztG/iiTG3fuV8WMjTMmiyyCuFrFqPUwA47f5vMOSyHdQc7hkhyARch1XV+o8bflNaJbv18lOuuKvx5eVyZzcAyrDf20ZFqVdC+K2hfYHaknCvPXQdysfz6Go36Q6ls7Z3tOSYKtN8rtTk5d1CivpGrkjcQ7SMOT1UP/iR/qVYdrkuJkWLN/HJXWLisBpns6w0bROoa0wSrzHeZxzuoPvghO2BjVqAGUUSd8Er++HYSjhFZY5Bp5vm4CEyP2DB/B7jgF8QSS3pj9o="

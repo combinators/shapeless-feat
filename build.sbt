@@ -72,5 +72,6 @@ lazy val publishSettings = Seq(
 lazy val noPublishSettings = Seq(
   publish := Seq.empty,
   publishLocal := Seq.empty,
-  publishArtifact := false
+  publishArtifact := false,
+  skip in publish := true
 )
