@@ -49,7 +49,7 @@ lazy val examples =
 lazy val publishSettings = Seq(
   homepage := Some(url("https://www.github.com/JanBessai/shapeless-feat")),
   licenses := Seq(
-    "Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")
+    "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")
   ),
   scmInfo := Some(
     ScmInfo(
@@ -66,7 +66,8 @@ lazy val publishSettings = Seq(
     )
   ),
   pgpPublicRing := file("travis/local.pubring.asc"),
-  pgpSecretRing := file("travis/local.secring.asc")
+  pgpSecretRing := file("travis/local.secring.asc"),
+  releaseEarlyWith := SonatypePublisher
 )
 
 lazy val noPublishSettings = Seq(
