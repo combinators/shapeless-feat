@@ -47,14 +47,14 @@ lazy val examples =
     )
 
 lazy val publishSettings = Seq(
-  homepage := Some(url("https://www.github.com/JanBessai/shapeless-feat")),
+  homepage := Some(url("https://www.github.com/combinators/shapeless-feat")),
   licenses := Seq(
     "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")
   ),
   scmInfo := Some(
     ScmInfo(
-      url("https://github.com/JanBessai/shapeless-feat"),
-      "scm:git:git@github.com:JanBessai/shapeless-feat.git"
+      url("https://github.com/combinators/shapeless-feat"),
+      "scm:git:git@github.com:combinators/shapeless-feat.git"
     )
   ),
   developers := List(
