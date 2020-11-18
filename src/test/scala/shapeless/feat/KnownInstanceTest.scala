@@ -20,54 +20,58 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
-class KnownInstanceTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers {
+class KnownInstanceTest
+    extends AnyFreeSpec
+    with ScalaCheckDrivenPropertyChecks
+    with Matchers {
   import enumerables._
   import ArbitraryInstances._
   import EnumerableInstances._
-  
+
   implicit override val generatorDrivenConfig =
     PropertyCheckConfiguration(sizeRange = 4)
-  
+
   "Checking known instances" - {
     "NonRec type" in {
       forAll { (x: NonRec) =>
-        nonRec.enumerate.values.flatMap(_._2) should contain (x)
+        nonRec.enumerate.values.flatMap(_._2) should contain(x)
       }
     }
     "Rec type" in {
       forAll { (x: Rec) =>
-        rec.enumerate.values.flatMap(_._2) should contain (x)
+        rec.enumerate.values.flatMap(_._2) should contain(x)
       }
     }
 
     def size1(m: MutualRec1): Int = {
       m match {
-        case MutualRec1A() => 2 /* 1 for subtype to supertype + 1 for constructor */
+        case MutualRec1A()     => 2 /* 1 for subtype to supertype + 1 for constructor */
         case MutualRec1B(x, y) => 2 + size2(x) + size1(y)
       }
     }
     def size2(m: MutualRec2): Int =
       m match {
         case MutualRec2A(x) => 2 + size1(x)
-        case MutualRec2B() => 2
+        case MutualRec2B()  => 2
       }
 
     "MutualRec1 type" in {
       forAll { (x: MutualRec1) =>
-        mutualRec1.enumerate.values(size1(x))._2 should contain (x)
+        mutualRec1.enumerate.values(size1(x))._2 should contain(x)
       }
     }
     "MutualRec2 type" in {
       forAll { (x: MutualRec2) =>
-        mutualRec2.enumerate.values(size2(x))._2 should contain (x)
+        mutualRec2.enumerate.values(size2(x))._2 should contain(x)
       }
     }
 
-    def lsize(l: Label): Int = 2 /* 1 to go from Ln to Label, 1 for the element */
+    def lsize(l: Label): Int =
+      2 /* 1 to go from Ln to Label, 1 for the element */
     def fsize(f: Seq[Tree]): Int =
       f match {
         case t +: f => 1 /* for cons */ + tsize(t) + fsize(f)
-        case _ => 1 /* for nil */
+        case _      => 1 /* for nil */
       }
     def tsize(t: Tree): Int =
       t match {
@@ -76,7 +80,7 @@ class KnownInstanceTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks 
       }
     "Tree type" in {
       forAll { (x: Tree) =>
-        tree.enumerate.values(tsize(x))._2 should contain (x)
+        tree.enumerate.values(tsize(x))._2 should contain(x)
       }
     }
 

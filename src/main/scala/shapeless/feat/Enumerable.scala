@@ -83,7 +83,7 @@ trait EnumerableIterableInstances extends EnumerableGenericInstances {
             e.value.enumerate
               .product(enumerate)
               .map {
-                case (elem, c) => ((factory.newBuilder += elem) ++= c).result
+                case (elem, c) => ((factory.newBuilder += elem) ++= c).result()
               }
           )
           .pay

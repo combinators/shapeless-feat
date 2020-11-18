@@ -24,60 +24,60 @@ package enumerables {
   case class NonRecA() extends NonRec
   case class NonRecB() extends NonRec
   case class NonRecC(x: Boolean) extends NonRec
-    
+
   sealed trait Rec
   case class RecA(x: Rec) extends Rec
   case class RecB() extends Rec
-  
+
   sealed trait MutualRec1
   sealed trait MutualRec2
-  
+
   case class MutualRec1A() extends MutualRec1
   case class MutualRec1B(x: MutualRec2, y: MutualRec1) extends MutualRec1
   case class MutualRec2A(x: MutualRec1) extends MutualRec2
   case class MutualRec2B() extends MutualRec2
-  
+
   sealed trait Label
   case class L1() extends Label
   case class L2() extends Label
   case class L3() extends Label
-  
+
   sealed trait Tree
   case class Node(label: Label, children: Seq[Tree]) extends Tree
 }
 
 object EnumerableInstances {
   import enumerables._
-  
-  
+
   val nonRec = Enumerable[NonRec]
   val nonRecA = Enumerable[NonRecA]
-  val nonRecB = Enumerable[NonRecB] 
+  val nonRecB = Enumerable[NonRecB]
   val nonRecC = Enumerable[NonRecC]
-  
+
   val rec = Enumerable[Rec]
   val recA = Enumerable[RecA]
   val recB = Enumerable[RecB]
-  
+
   val mutualRec1 = Enumerable[MutualRec1]
   val mutualRec1A = Enumerable[MutualRec1A]
   val mutualRec1B = Enumerable[MutualRec1B]
   val mutualRec2 = Enumerable[MutualRec2]
   val mutualRec2A = Enumerable[MutualRec2A]
   val mutualRec2B = Enumerable[MutualRec2B]
-  
+
   val tree = Enumerable[Tree]
   val node = Enumerable[Node]
-  
+
   val enumerableInt = Enumerable[Int]
   val enumerableChar = Enumerable[Char]
   val enumerableBoolean = Enumerable[Boolean]
-  
+
   val enumerableListBoolean = Enumerable[List[Boolean]]
 
   case class Tag(tagName: String)
-  
-  val testingEnumerables: Map[Tag, Enumerable[_ <: Any]] = Map[Tag, Enumerable[_ <: Any]](
+
+  val testingEnumerables: Map[Tag, Enumerable[_ <: Any]] =
+    Map[Tag, Enumerable[_ <: Any]](
       Tag("enumerableInt") -> enumerableInt,
       Tag("enumerableChar") -> enumerableChar,
       Tag("enumerableBoolean") -> enumerableBoolean,
@@ -104,38 +104,47 @@ object EnumerableInstances {
 
 object ArbitraryInstances {
   import enumerables._
-  
+
   implicit lazy val arbNonRec: Arbitrary[NonRec] =
     Arbitrary(Gen.oneOf(NonRecA(), NonRecB(), NonRecC(true), NonRecC(false)))
-    
+
   implicit lazy val arbRec: Arbitrary[Rec] = Arbitrary[Rec] {
     def genRec(size: Int): Gen[Rec] =
       if (size <= 0) Gen.const(RecB())
-      else Gen.frequency((1, Gen.const(RecB())), (3, genRec(size - 1).map(RecA)))
-    
+      else
+        Gen.frequency((1, Gen.const(RecB())), (3, genRec(size - 1).map(RecA)))
+
     Gen.sized(genRec)
   }
-  
+
   private final def genMutualRec1(size: Int): Gen[MutualRec1] =
-      if (size <= 0) Gen.const(MutualRec1A())
-      else Gen.frequency(
-          (1, Gen.const(MutualRec1A())), 
-          (3, for { l <- genMutualRec2(size/2); r <- genMutualRec1(size/2) } yield MutualRec1B(l, r)))
+    if (size <= 0) Gen.const(MutualRec1A())
+    else
+      Gen.frequency((1, Gen.const(MutualRec1A())), (3, for {
+        l <- genMutualRec2(size / 2); r <- genMutualRec1(size / 2)
+      } yield MutualRec1B(l, r)))
   private final def genMutualRec2(size: Int): Gen[MutualRec2] =
-      if (size <= 0) Gen.const(MutualRec2B())
-      else Gen.frequency(
-          (1, Gen.const(MutualRec2B())), 
-          (3, genMutualRec1(size - 1).map(MutualRec2A)))
-          
-  implicit lazy val arbMutualRec1: Arbitrary[MutualRec1] = Arbitrary(Gen.sized(genMutualRec1))
-  implicit lazy val arbMutualRec2: Arbitrary[MutualRec2] = Arbitrary(Gen.sized(genMutualRec2))
-  
+    if (size <= 0) Gen.const(MutualRec2B())
+    else
+      Gen.frequency(
+        (1, Gen.const(MutualRec2B())),
+        (3, genMutualRec1(size - 1).map(MutualRec2A))
+      )
+
+  implicit lazy val arbMutualRec1: Arbitrary[MutualRec1] = Arbitrary(
+    Gen.sized(genMutualRec1)
+  )
+  implicit lazy val arbMutualRec2: Arbitrary[MutualRec2] = Arbitrary(
+    Gen.sized(genMutualRec2)
+  )
+
   implicit lazy val arbTree: Arbitrary[Tree] = Arbitrary[Tree] {
-    def genTree(size: Int): Gen[Tree] = 
+    def genTree(size: Int): Gen[Tree] =
       for {
         label <- Gen.oneOf(L1(), L2(), L3())
         n <- Gen.choose(0, Math.max(0, Math.min(size, 3)))
-        children <- if (n > 0) Gen.listOfN(n, genTree(size / 3)) else Gen.const(List())
+        children <- if (n > 0) Gen.listOfN(n, genTree(size / 3))
+        else Gen.const(List())
       } yield Node(label, children)
     Gen.sized(genTree)
   }

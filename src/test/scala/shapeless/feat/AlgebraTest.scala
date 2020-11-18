@@ -23,38 +23,63 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
-class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil  {
+class AlgebraTest
+    extends AnyFreeSpec
+    with ScalaCheckDrivenPropertyChecks
+    with Matchers
+    with MatcherUtil {
   import EnumerableInstances._
 
-  implicit val smallBigInt = Arbitrary(Gen.choose[Int](Int.MinValue, generatorDrivenConfig.sizeRange).map(BigInt(_)))
+  implicit val smallBigInt = Arbitrary(
+    Gen
+      .choose[Int](Int.MinValue, generatorDrivenConfig.sizeRange)
+      .map(BigInt(_))
+  )
 
   "Checking algebraic properties" - {
     "index and pay" in {
       forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
-         e._2.enumerate should equalOrExceptAtIndex(i)(e._2.enumerate.pay)
+        e._2.enumerate should equalOrExceptAtIndex(i)(e._2.enumerate.pay)
       }
     }
     "index injective" in {
       forAll { (e: (Tag, Enumerable[_ <: Any])) =>
         val allElements =
           (0 to generatorDrivenConfig.sizeRange)
-            .map (idx => Try(e._2.enumerate.index(idx)))
-            .filter (_.isSuccess)
-            .map (_.get)
-        allElements.size should equal (allElements.toSet.size)
+            .map(idx => Try(e._2.enumerate.index(idx)))
+            .filter(_.isSuccess)
+            .map(_.get)
+        allElements.size should equal(allElements.toSet.size)
       }
     }
     "pay sum distributive" in {
-      forAll { (e1: (Tag, Enumerable[_ <: Any]), e2: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
-        e1._2.enumerate.union(e2._2.enumerate).pay should
-          equalOrExceptAtIndex[Any](i)(e1._2.enumerate.pay.union(e2._2.enumerate.pay))
+      forAll {
+        (
+            e1: (Tag, Enumerable[_ <: Any]),
+            e2: (Tag, Enumerable[_ <: Any]),
+            i: BigInt
+        ) =>
+          e1._2.enumerate.union(e2._2.enumerate).pay should
+            equalOrExceptAtIndex[Any](i)(
+              e1._2.enumerate.pay.union(e2._2.enumerate.pay)
+            )
       }
     }
     "pay product distributive" in {
-      forAll { (e1: (Tag, Enumerable[_ <: Any]), e2: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
-        e1._2.enumerate.product(e2._2.enumerate).pay should 
-          (equalOrExceptAtIndex[(Any, Any)](i)(e1._2.enumerate.pay.product(e2._2.enumerate)) and
-           equalOrExceptAtIndex[(Any, Any)](i)(e1._2.enumerate.product(e2._2.enumerate.pay)))
+      forAll {
+        (
+            e1: (Tag, Enumerable[_ <: Any]),
+            e2: (Tag, Enumerable[_ <: Any]),
+            i: BigInt
+        ) =>
+          e1._2.enumerate.product(e2._2.enumerate).pay should
+            (equalOrExceptAtIndex[(Any, Any)](i)(
+              e1._2.enumerate.pay.product(e2._2.enumerate)
+            ).and(
+              equalOrExceptAtIndex[(Any, Any)](i)(
+                e1._2.enumerate.product(e2._2.enumerate.pay)
+              )
+            ))
       }
     }
     "map preserves composition" in {
@@ -66,13 +91,17 @@ class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with M
     "map lifts product right" in {
       forAll { (e: (Tag, Enumerable[_ <: Any]), x: Boolean, i: BigInt) =>
         e._2.enumerate.product(Enumeration.singleton(x)) should
-          equalOrExceptAtIndex[(Any, Any)](i)(e._2.enumerate.map((y : Any) => (y, x)))
+          equalOrExceptAtIndex[(Any, Any)](i)(
+            e._2.enumerate.map((y: Any) => (y, x))
+          )
       }
     }
     "map lifts product left" in {
       forAll { (e: (Tag, Enumerable[_ <: Any]), x: Boolean, i: BigInt) =>
         Enumeration.singleton(x).product(e._2.enumerate) should
-          equalOrExceptAtIndex[(Any, Any)](i)(e._2.enumerate.map((y : Any) => (x, y)))
+          equalOrExceptAtIndex[(Any, Any)](i)(
+            e._2.enumerate.map((y: Any) => (x, y))
+          )
       }
     }
     "map lifts sum right" in {
@@ -91,9 +120,11 @@ class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with M
       forAll { (e: (Tag, Enumerable[_ <: Any])) =>
         val allParts =
           (0 to generatorDrivenConfig.sizeRange)
-            .map (idx => Try(e._2.enumerate.product(Enumeration.empty).parts(idx)))
-            .filter (_.isSuccess)
-            .map (_.get)
+            .map(idx =>
+              Try(e._2.enumerate.product(Enumeration.empty).parts(idx))
+            )
+            .filter(_.isSuccess)
+            .map(_.get)
         allParts.foreach { (part: Finite[_ <: Any]) =>
           part.cardinality shouldBe 0
         }
@@ -109,12 +140,12 @@ class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with M
       forAll { (e: (Tag, Enumerable[_ <: Any]), i: BigInt) =>
         val allParts =
           (0 to generatorDrivenConfig.sizeRange)
-            .map (idx => Try(e._2.enumerate.parts(idx)))
-            .filter (_.isSuccess)
-            .map (_.get)
+            .map(idx => Try(e._2.enumerate.parts(idx)))
+            .filter(_.isSuccess)
+            .map(_.get)
         allParts.foreach { (part: Finite[_ <: Any]) =>
           if (i < 0 || i > part.cardinality) {
-            an [IndexOutOfBoundsException] should be thrownBy part.get(i)
+            an[IndexOutOfBoundsException] should be thrownBy part.get(i)
           } else {
             noException should be thrownBy part.get(i)
           }
@@ -122,5 +153,5 @@ class AlgebraTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with M
       }
     }
   }
-  
+
 }
