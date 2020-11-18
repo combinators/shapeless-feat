@@ -23,18 +23,24 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
-
-class PerformanceTest extends AnyFreeSpec with ScalaCheckDrivenPropertyChecks with Matchers with MatcherUtil with TimeLimits {
+class PerformanceTest
+    extends AnyFreeSpec
+    with ScalaCheckDrivenPropertyChecks
+    with Matchers
+    with MatcherUtil
+    with TimeLimits {
   import EnumerableInstances._
-  
+
   "Checking performance" - {
     "Requesting index 2000" in {
       System.gc() // Try to avoid overflows in repeated sbt runs
       forAll { (e: (Tag, Enumerable[_ <: Any])) =>
         failAfter(10 seconds) {
-          e._2.enumerate should (equalOrExceptAtIndex[Any](2000)(e._2.enumerate))
+          e._2.enumerate should (equalOrExceptAtIndex[Any](2000)(
+            e._2.enumerate
+          ))
         }
-        
+
       }
     }
   }
