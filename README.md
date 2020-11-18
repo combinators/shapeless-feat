@@ -1,6 +1,6 @@
 # shapeless-feat
-[![Maven Central](https://img.shields.io/maven-central/v/org.combinators/shapeless-feat_2.12.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.combinators%22%20AND%20%22shapeless-feat%22)
-[![build status](https://travis-ci.org/combinators/shapeless-feat.svg?branch=master)](https://travis-ci.org/combinators/shapeless-feat)
+[![Maven Central](https://img.shields.io/maven-central/v/org.combinators/shapeless-feat_2.13.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.combinators%22%20AND%20%22shapeless-feat%22)
+[![build status](https://github.com/combinators/shapeless-feat/workflows/Test%20code,%20update%20coverage,%20and%20release%20master%20branch/badge.svg?branch=master)](https://github.com/combinators/shapeless-feat/actions?query=workflow%3A%22Test+code%2C+update+coverage%2C+and+release+master+branch%22)
 [![Coverage Status](https://coveralls.io/repos/github/combinators/shapeless-feat/badge.svg?branch=master)](https://coveralls.io/github/combinators/shapeless-feat?branch=master)
 [![Join the chat at https://gitter.im/combinators/shapeless-feat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/combinators/shapeless-feat)
 ## Shapeless Generic Functional Enumeration of Algebraic Data Types for Scala
