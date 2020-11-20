@@ -1,4 +1,4 @@
-### Version 0.2.4.2
+### Version 0.2.5
 - No API Changes, but dependencies updated to latest version.
   Also signed with a fresh GPG key.
 
