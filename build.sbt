@@ -17,10 +17,7 @@ lazy val commonSettings = Seq(
   ),
   javaOptions in Test := Seq("-Xss16m"),
   fork in Test := true,
-  scapegoatVersion in ThisBuild := "1.4.6",
-  concurrentRestrictions in Global ++= {
-    if (sys.env.get("CI") == Some("github")) Seq(Tags.limitAll(1)) else Seq.empty
-  }
+  scapegoatVersion in ThisBuild := "1.4.6"
 ) ++ publishSettings
 
 lazy val root = Project(id = "shapeless-feat", base = file("."))
