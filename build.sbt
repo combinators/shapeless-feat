@@ -2,7 +2,7 @@ import sbt.{Credentials, Developer, ScmInfo}
 
 lazy val commonSettings = Seq(
   organization := "org.combinators",
-  scalaVersion := "2.13.3",
+  scalaVersion := "2.13.4",
   crossScalaVersions := Seq("2.11.12", "2.12.12", scalaVersion.value),
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
